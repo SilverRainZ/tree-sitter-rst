@@ -197,6 +197,7 @@ static bool rst_scanner_scan(RSTScanner* scanner)
   }
 
   if (current == ':' && (valid_symbols[T_ROLE_NAME_PREFIX] || valid_symbols[T_ROLE_NAME_SUFFIX])) {
+    printf(">>> parse_role\n");
     return parse_role(scanner);
   }
 
