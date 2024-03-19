@@ -36,4 +36,9 @@ format:
 	  src/scanner.c \
 	  src/tree_sitter_rst/*
 
-.PHONY: build test format serve release update-examples parse-examples
+gen-punctuation-chars:
+	./utils/generate_punctuation_chars.py > ./src/tree_sitter_rst/punctuation_chars.h
+	# make format
+
+
+.PHONY: build test format serve release update-examples parse-examples gen-punctuation-chars

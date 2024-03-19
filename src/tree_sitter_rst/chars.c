@@ -119,13 +119,13 @@ static bool is_adornment_char(int32_t c)
 
 static bool is_delim_char(int32_t c)
 {
-  const int length = sizeof(punctuation_chars_delimiters) / sizeof(int32_t);
+  const int length = sizeof(start_chars) / sizeof(int32_t);
   for (int i = 0; i < length; i++) {
     if (c == punctuation_chars_delimiters[i]) {
       return true;
     }
   }
-  const int length2 = sizeof(punctuation_chars_delimiters_range) / sizeof(int32_t);
+  const int length2 = sizeof(punctuation_chars_delimiters_range) / sizeof(punctuation_chars_delimiters_range[0]);
   for (int i = 0; i < length2; i++) {
     if (c >= punctuation_chars_delimiters_range[i][0] && c <= punctuation_chars_delimiters_range[i][1]) {
       return true;
@@ -139,7 +139,7 @@ static bool is_delim_char(int32_t c)
 /// Some tokens can start after non-whitespace chars.
 static bool is_start_char(int32_t c)
 {
-  const int length = sizeof(punctuation_chars_openers) / sizeof(int32_t);
+  const int length = sizeof(start_chars) / sizeof(int32_t);
   for (int i = 0; i < length; i++) {
     if (c == punctuation_chars_openers[i]) {
       return true;
