@@ -16,7 +16,7 @@ def c_repr(ch) -> str:
 def generate_c_chars_define(name: str, chars: str) -> str:
     INDENT = ' ' * 2
     c_chars = ['const int32_t punctuation_chars_%s[] = {' % name ]
-    c_char_ranges = ['const int32_t punctuation_char_%s_range[][2] = {' % name]
+    c_char_ranges = ['const int32_t punctuation_chars_%s_range[][2] = {' % name]
     range_start = None
     for i, ch in enumerate(chars):
         if range_start is not None:
@@ -24,7 +24,7 @@ def generate_c_chars_define(name: str, chars: str) -> str:
                 continue # skip range sign
             if is_ascii(ch):
                 raise Exception("expect unicode, found ascii: %s" % ch)
-            c_char_ranges.append(INDENT + "{ %s, %s }" % (c_repr(range_start), c_repr(ch)))
+            c_char_ranges.append(INDENT + "{ %s, %s }," % (c_repr(range_start), c_repr(ch)))
             range_start = None
 
         if not is_ascii(ch) and i != len(chars)-1 and chars[i+1] == '-':
