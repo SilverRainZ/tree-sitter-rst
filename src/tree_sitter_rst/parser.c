@@ -1102,6 +1102,7 @@ static bool parse_inline_markup(RSTScanner* scanner)
     type = IM_LITERAL;
   } else if (scanner->previous == '`' && (valid_symbols[T_INTERPRETED_TEXT] || valid_symbols[T_INTERPRETED_TEXT_PREFIX] || valid_symbols[T_REFERENCE])) {
     type = IM_INTERPRETED_TEXT | IM_INTERPRETED_TEXT_PREFIX | IM_REFERENCE;
+    printf(">> IM_INTERPRETED_TEXT\n");
   } else if (scanner->previous == '|' && valid_symbols[T_SUBSTITUTION_REFERENCE]) {
     type = IM_SUBSTITUTION_REFERENCE;
   } else if (scanner->previous == '_' && scanner->lookahead == '`' && valid_symbols[T_INLINE_TARGET]) {
@@ -1112,6 +1113,7 @@ static bool parse_inline_markup(RSTScanner* scanner)
 
   // Skip one char for tokens that start with a double char
   if (type & (IM_STRONG | IM_LITERAL | IM_INLINE_TARGET)) {
+      printf(">> advance\n");
     scanner->advance(scanner);
   }
 
@@ -1131,6 +1133,7 @@ static bool parse_inline_markup(RSTScanner* scanner)
     return false;
   }
 
+  printf(">> parse_inner_inline_markup\n");
   return parse_inner_inline_markup(scanner, type);
 }
 

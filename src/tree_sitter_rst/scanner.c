@@ -169,6 +169,7 @@ static bool rst_scanner_scan(RSTScanner* scanner)
     return parse_directive_name(scanner);
   }
 
+  printf(">>> try inline_markup\n");
   if (is_inline_markup_start_char(current)
       && (valid_symbols[T_EMPHASIS]
           || valid_symbols[T_STRONG]
@@ -180,6 +181,7 @@ static bool rst_scanner_scan(RSTScanner* scanner)
           || valid_symbols[T_FOOTNOTE_REFERENCE]
           || valid_symbols[T_CITATION_REFERENCE]
           || valid_symbols[T_REFERENCE])) {
+      printf(">>> parse inline_markup: %c\n", current);
     return parse_inline_markup(scanner);
   }
 
@@ -196,6 +198,7 @@ static bool rst_scanner_scan(RSTScanner* scanner)
     return parse_literal_block_mark(scanner);
   }
 
+  printf(">>> try parse_role\n");
   if (current == ':' && (valid_symbols[T_ROLE_NAME_PREFIX] || valid_symbols[T_ROLE_NAME_SUFFIX])) {
     printf(">>> parse_role\n");
     return parse_role(scanner);
