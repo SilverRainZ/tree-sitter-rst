@@ -184,7 +184,7 @@ I'm also another :role-name:a-little-longer:`than usual`.
 
 :code:`not a field name`: paragraph with interpreted text
 
-:code:`I'm 
+:code:`I'm
 here`
 
 Edge cases:
@@ -509,7 +509,13 @@ Chinese comma: I am *valid*，**me too**。
 
 Chinese parenthesis: I'm in （*parenthesis*）
 
-Chinese double quote: I'm in “*double quotes*” 
+Chinese double quote: I'm in “*double quotes*”
+
+I am a link_。
+
+I am a link__。
+
+I am a footnote [1]_。
 
 ---
 
@@ -522,4 +528,10 @@ Chinese double quote: I'm in “*double quotes*”
   (paragraph
     (emphasis))
   (paragraph
-    (emphasis)))
+    (emphasis))
+  (paragraph
+    (reference))
+  (paragraph
+    (reference))
+  (paragraph
+    (footnote_reference)))
