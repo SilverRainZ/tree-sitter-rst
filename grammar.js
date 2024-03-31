@@ -3,7 +3,7 @@ const NEWLINE = /\r?\n/;
 const LINK = /\S(.*\S)?/;
 
 module.exports = grammar({
-  name: 'rst',
+  name: 'rst2',
 
   externals: $ => [
     // Whitespace

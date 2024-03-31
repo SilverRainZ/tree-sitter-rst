@@ -34,9 +34,9 @@ format:
 	clang-format -i \
 	  --style="{BasedOnStyle: webkit, IndentWidth: 2}" \
 	  src/scanner.c \
-	  src/tree_sitter_rst/*
+	  src/tree_sitter_rst2/*
 
 gen-punctuation-chars:
-	./utils/gen_punctuation_chars.py > ./src/tree_sitter_rst/punctuation_chars.h
+	./utils/gen_punctuation_chars.py > ./src/tree_sitter_rst2/punctuation_chars.h
 
 .PHONY: build test format serve release update-examples parse-examples gen-punctuation-chars

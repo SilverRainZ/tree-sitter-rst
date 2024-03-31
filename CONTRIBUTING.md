@@ -44,15 +44,15 @@ Some of the files that aren't auto-generated are:
 
 - `grammar.js`: it defines all nodes that our grammar has and its structure.
 - `src/scanner.c`: the entry point to our custom scanner, to make it easier to maintain
-  the code that isn't auto-generated is inside the `src/tree_sitter_rst/` directory.
-- `src/tree_sitter_rst/scanner.c`: it contains functions used to create/serialize/de-serialize
+  the code that isn't auto-generated is inside the `src/tree_sitter_rst2/` directory.
+- `src/tree_sitter_rst2/scanner.c`: it contains functions used to create/serialize/de-serialize
   our custom scanner, and it also has the main entry point to our custom scanner:
   `rst_scanner_scan` (AKA, the big collection of `if`s).
-- `src/tree_sitter_rst/tokens.h`: defines all tokens that our external scanner recognize,
+- `src/tree_sitter_rst2/tokens.h`: defines all tokens that our external scanner recognize,
   they are the same that are declared in the `externals` attribute in our `grammar.js` file.
-- `src/tree_sitter_rst/chars.c`: some utility functions to recognize characters, like numbers,
+- `src/tree_sitter_rst2/chars.c`: some utility functions to recognize characters, like numbers,
   bullets, letters, etc.
-- `src/tree_sitter_rst/parser.c`: here are all functions that match the current text being parsed
+- `src/tree_sitter_rst2/parser.c`: here are all functions that match the current text being parsed
   to a valid `token`.
 - `test/corpus/`: tests for our grammar so we are sure nothing breaks when changing stuff,
   you can read about the syntax at <https://tree-sitter.github.io/tree-sitter/creating-parsers#command-test>.

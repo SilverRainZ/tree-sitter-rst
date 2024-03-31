@@ -1,19 +1,19 @@
 #include "tree_sitter/parser.h"
 
-#include "tree_sitter_rst/scanner.c"
-#include "tree_sitter_rst/tokens.h"
+#include "tree_sitter_rst2/scanner.c"
+#include "tree_sitter_rst2/tokens.h"
 
-void* tree_sitter_rst_external_scanner_create()
+void* tree_sitter_rst2_external_scanner_create()
 {
   return new_rst_scanner();
 }
 
-void tree_sitter_rst_external_scanner_destroy(void* payload)
+void tree_sitter_rst2_external_scanner_destroy(void* payload)
 {
   destroy_rst_scanner(payload);
 }
 
-unsigned tree_sitter_rst_external_scanner_serialize(
+unsigned tree_sitter_rst2_external_scanner_serialize(
     void* payload,
     char* buffer)
 {
@@ -21,7 +21,7 @@ unsigned tree_sitter_rst_external_scanner_serialize(
   return scanner->serialize(scanner, buffer);
 }
 
-void tree_sitter_rst_external_scanner_deserialize(
+void tree_sitter_rst2_external_scanner_deserialize(
     void* payload,
     const char* buffer,
     unsigned length)
@@ -30,7 +30,7 @@ void tree_sitter_rst_external_scanner_deserialize(
   scanner->deserialize(scanner, buffer, length);
 }
 
-bool tree_sitter_rst_external_scanner_scan(
+bool tree_sitter_rst2_external_scanner_scan(
     void* payload,
     TSLexer* lexer,
     const bool* valid_symbols)
