@@ -1,7 +1,6 @@
-#include <tree_sitter/parser.h>
+#include "tree_sitter/parser.h"
 
 #if defined(__GNUC__) || defined(__clang__)
-#pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
 #endif
 
@@ -16,15 +15,15 @@
 #define MAX_ALIAS_SEQUENCE_LENGTH 4
 #define PRODUCTION_ID_COUNT 27
 
-enum {
+enum ts_symbol_identifiers {
   aux_sym__classifiers_token1 = 1,
   aux_sym_target_token1 = 2,
   anon_sym_COLON_COLON = 3,
-  anon_sym_ = 4,
+  anon_sym_SPACE = 4,
   anon_sym_TAB = 5,
-  anon_sym_2 = 6,
-  anon_sym_3 = 7,
-  anon_sym_4 = 8,
+  anon_sym_VTAB = 6,
+  anon_sym_FF = 7,
+  anon_sym_u00a0 = 8,
   sym___newline = 9,
   sym___whitespace = 10,
   sym__newline = 11,
@@ -143,11 +142,11 @@ static const char * const ts_symbol_names[] = {
   [aux_sym__classifiers_token1] = ":",
   [aux_sym_target_token1] = "link",
   [anon_sym_COLON_COLON] = "::",
-  [anon_sym_] = " ",
+  [anon_sym_SPACE] = " ",
   [anon_sym_TAB] = "\t",
-  [anon_sym_2] = "",
-  [anon_sym_3] = "\f",
-  [anon_sym_4] = " ",
+  [anon_sym_VTAB] = "\v",
+  [anon_sym_FF] = "\f",
+  [anon_sym_u00a0] = "\u00a0",
   [sym___newline] = "__newline",
   [sym___whitespace] = "__whitespace",
   [sym__newline] = "_newline",
@@ -266,11 +265,11 @@ static const TSSymbol ts_symbol_map[] = {
   [aux_sym__classifiers_token1] = sym__field_mark,
   [aux_sym_target_token1] = aux_sym_target_token1,
   [anon_sym_COLON_COLON] = anon_sym_COLON_COLON,
-  [anon_sym_] = anon_sym_,
+  [anon_sym_SPACE] = anon_sym_SPACE,
   [anon_sym_TAB] = anon_sym_TAB,
-  [anon_sym_2] = anon_sym_2,
-  [anon_sym_3] = anon_sym_3,
-  [anon_sym_4] = anon_sym_4,
+  [anon_sym_VTAB] = anon_sym_VTAB,
+  [anon_sym_FF] = anon_sym_FF,
+  [anon_sym_u00a0] = anon_sym_u00a0,
   [sym___newline] = sym___newline,
   [sym___whitespace] = sym___whitespace,
   [sym__newline] = sym__newline,
@@ -401,7 +400,7 @@ static const TSSymbolMetadata ts_symbol_metadata[] = {
     .visible = true,
     .named = false,
   },
-  [anon_sym_] = {
+  [anon_sym_SPACE] = {
     .visible = true,
     .named = false,
   },
@@ -409,15 +408,15 @@ static const TSSymbolMetadata ts_symbol_metadata[] = {
     .visible = true,
     .named = false,
   },
-  [anon_sym_2] = {
+  [anon_sym_VTAB] = {
     .visible = true,
     .named = false,
   },
-  [anon_sym_3] = {
+  [anon_sym_FF] = {
     .visible = true,
     .named = false,
   },
-  [anon_sym_4] = {
+  [anon_sym_u00a0] = {
     .visible = true,
     .named = false,
   },
@@ -870,7 +869,7 @@ static const TSSymbolMetadata ts_symbol_metadata[] = {
   },
 };
 
-enum {
+enum ts_field_identifiers {
   field_body = 1,
   field_link = 2,
   field_name = 3,
@@ -1405,22 +1404,15 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
       END_STATE();
     case 3:
       if (lookahead == '\t' ||
+          lookahead == 11 ||
+          lookahead == '\f' ||
           lookahead == ' ') ADVANCE(20);
       if (lookahead == '\n') ADVANCE(18);
-      if (lookahead == 11 ||
-          lookahead == '\f' ||
-          lookahead == 160) ADVANCE(10);
       if (lookahead == '\r') ADVANCE(1);
+      if (lookahead == 160) ADVANCE(10);
       if (lookahead != 0) ADVANCE(11);
       END_STATE();
     case 4:
-      if (lookahead == '\t' ||
-          lookahead == '\r' ||
-          lookahead == ' ') ADVANCE(4);
-      if (lookahead != 0 &&
-          lookahead != '\n') ADVANCE(11);
-      END_STATE();
-    case 5:
       if (lookahead == '\t' ||
           lookahead == 11 ||
           lookahead == '\f' ||
@@ -1429,12 +1421,19 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
       if (lookahead == '\n') ADVANCE(18);
       if (lookahead == '\r') ADVANCE(1);
       END_STATE();
-    case 6:
+    case 5:
       if (lookahead == '\t' ||
           lookahead == 11 ||
           lookahead == '\f' ||
           lookahead == ' ' ||
           lookahead == 160) ADVANCE(9);
+      END_STATE();
+    case 6:
+      if (lookahead == '\t' ||
+          (11 <= lookahead && lookahead <= '\r') ||
+          lookahead == ' ') ADVANCE(6);
+      if (lookahead != 0 &&
+          lookahead != '\n') ADVANCE(11);
       END_STATE();
     case 7:
       if (eof) ADVANCE(8);
@@ -1461,19 +1460,19 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
     case 10:
       ACCEPT_TOKEN(aux_sym_target_token1);
       if (lookahead == '\t' ||
-          lookahead == ' ') ADVANCE(19);
-      if (lookahead == 11 ||
+          lookahead == 11 ||
           lookahead == '\f' ||
-          lookahead == 160) ADVANCE(10);
-      if (lookahead == '\r') ADVANCE(4);
+          lookahead == ' ') ADVANCE(19);
+      if (lookahead == '\r') ADVANCE(6);
+      if (lookahead == 160) ADVANCE(10);
       if (lookahead != 0 &&
           lookahead != '\n') ADVANCE(11);
       END_STATE();
     case 11:
       ACCEPT_TOKEN(aux_sym_target_token1);
       if (lookahead == '\t' ||
-          lookahead == '\r' ||
-          lookahead == ' ') ADVANCE(4);
+          (11 <= lookahead && lookahead <= '\r') ||
+          lookahead == ' ') ADVANCE(6);
       if (lookahead != 0 &&
           lookahead != '\n') ADVANCE(11);
       END_STATE();
@@ -1481,7 +1480,7 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
       ACCEPT_TOKEN(anon_sym_COLON_COLON);
       END_STATE();
     case 13:
-      ACCEPT_TOKEN(anon_sym_);
+      ACCEPT_TOKEN(anon_sym_SPACE);
       if (lookahead == '\t' ||
           lookahead == 11 ||
           lookahead == '\f' ||
@@ -1497,7 +1496,7 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
           lookahead == 160) ADVANCE(20);
       END_STATE();
     case 15:
-      ACCEPT_TOKEN(anon_sym_2);
+      ACCEPT_TOKEN(anon_sym_VTAB);
       if (lookahead == '\t' ||
           lookahead == 11 ||
           lookahead == '\f' ||
@@ -1505,7 +1504,7 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
           lookahead == 160) ADVANCE(20);
       END_STATE();
     case 16:
-      ACCEPT_TOKEN(anon_sym_3);
+      ACCEPT_TOKEN(anon_sym_FF);
       if (lookahead == '\t' ||
           lookahead == 11 ||
           lookahead == '\f' ||
@@ -1513,7 +1512,7 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
           lookahead == 160) ADVANCE(20);
       END_STATE();
     case 17:
-      ACCEPT_TOKEN(anon_sym_4);
+      ACCEPT_TOKEN(anon_sym_u00a0);
       if (lookahead == '\t' ||
           lookahead == 11 ||
           lookahead == '\f' ||
@@ -1526,11 +1525,11 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
     case 19:
       ACCEPT_TOKEN(sym___whitespace);
       if (lookahead == '\t' ||
-          lookahead == ' ') ADVANCE(19);
-      if (lookahead == 11 ||
+          lookahead == 11 ||
           lookahead == '\f' ||
-          lookahead == 160) ADVANCE(10);
-      if (lookahead == '\r') ADVANCE(4);
+          lookahead == ' ') ADVANCE(19);
+      if (lookahead == '\r') ADVANCE(6);
+      if (lookahead == 160) ADVANCE(10);
       if (lookahead != 0 &&
           lookahead != '\n') ADVANCE(11);
       END_STATE();
@@ -1549,7 +1548,7 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
           lookahead == '\f' ||
           lookahead == ' ' ||
           lookahead == 160) ADVANCE(21);
-      if (lookahead == ':') ADVANCE(6);
+      if (lookahead == ':') ADVANCE(5);
       END_STATE();
     default:
       return false;
@@ -1596,11 +1595,11 @@ static const TSLexMode ts_lex_modes[STATE_COUNT] = {
   [36] = {.lex_state = 7, .external_lex_state = 2},
   [37] = {.lex_state = 7, .external_lex_state = 2},
   [38] = {.lex_state = 7, .external_lex_state = 2},
-  [39] = {.lex_state = 5, .external_lex_state = 6},
-  [40] = {.lex_state = 5, .external_lex_state = 6},
-  [41] = {.lex_state = 5, .external_lex_state = 6},
+  [39] = {.lex_state = 4, .external_lex_state = 6},
+  [40] = {.lex_state = 4, .external_lex_state = 6},
+  [41] = {.lex_state = 4, .external_lex_state = 6},
   [42] = {.lex_state = 7, .external_lex_state = 3},
-  [43] = {.lex_state = 5, .external_lex_state = 6},
+  [43] = {.lex_state = 4, .external_lex_state = 6},
   [44] = {.lex_state = 7, .external_lex_state = 5},
   [45] = {.lex_state = 7, .external_lex_state = 7},
   [46] = {.lex_state = 7, .external_lex_state = 8},
@@ -1612,17 +1611,17 @@ static const TSLexMode ts_lex_modes[STATE_COUNT] = {
   [52] = {.lex_state = 7, .external_lex_state = 10},
   [53] = {.lex_state = 7, .external_lex_state = 10},
   [54] = {.lex_state = 7, .external_lex_state = 9},
-  [55] = {.lex_state = 5, .external_lex_state = 11},
+  [55] = {.lex_state = 4, .external_lex_state = 11},
   [56] = {.lex_state = 7, .external_lex_state = 10},
   [57] = {.lex_state = 7, .external_lex_state = 10},
   [58] = {.lex_state = 7, .external_lex_state = 8},
   [59] = {.lex_state = 7, .external_lex_state = 9},
   [60] = {.lex_state = 7, .external_lex_state = 10},
   [61] = {.lex_state = 7, .external_lex_state = 10},
-  [62] = {.lex_state = 5, .external_lex_state = 11},
+  [62] = {.lex_state = 4, .external_lex_state = 11},
   [63] = {.lex_state = 7, .external_lex_state = 9},
-  [64] = {.lex_state = 5, .external_lex_state = 11},
-  [65] = {.lex_state = 5, .external_lex_state = 11},
+  [64] = {.lex_state = 4, .external_lex_state = 11},
+  [65] = {.lex_state = 4, .external_lex_state = 11},
   [66] = {.lex_state = 7, .external_lex_state = 12},
   [67] = {.lex_state = 7, .external_lex_state = 13},
   [68] = {.lex_state = 7, .external_lex_state = 14},
@@ -1634,26 +1633,26 @@ static const TSLexMode ts_lex_modes[STATE_COUNT] = {
   [74] = {.lex_state = 7, .external_lex_state = 12},
   [75] = {.lex_state = 7, .external_lex_state = 12},
   [76] = {.lex_state = 7, .external_lex_state = 12},
-  [77] = {.lex_state = 5, .external_lex_state = 6},
-  [78] = {.lex_state = 5, .external_lex_state = 6},
-  [79] = {.lex_state = 5, .external_lex_state = 6},
-  [80] = {.lex_state = 5, .external_lex_state = 6},
-  [81] = {.lex_state = 5, .external_lex_state = 6},
+  [77] = {.lex_state = 4, .external_lex_state = 6},
+  [78] = {.lex_state = 4, .external_lex_state = 6},
+  [79] = {.lex_state = 4, .external_lex_state = 6},
+  [80] = {.lex_state = 4, .external_lex_state = 6},
+  [81] = {.lex_state = 4, .external_lex_state = 6},
   [82] = {.lex_state = 7, .external_lex_state = 8},
   [83] = {.lex_state = 7, .external_lex_state = 8},
   [84] = {.lex_state = 7, .external_lex_state = 8},
   [85] = {.lex_state = 7, .external_lex_state = 8},
   [86] = {.lex_state = 7, .external_lex_state = 8},
   [87] = {.lex_state = 7, .external_lex_state = 7},
-  [88] = {.lex_state = 5, .external_lex_state = 11},
+  [88] = {.lex_state = 4, .external_lex_state = 11},
   [89] = {.lex_state = 7, .external_lex_state = 7},
   [90] = {.lex_state = 7, .external_lex_state = 7},
   [91] = {.lex_state = 7, .external_lex_state = 15},
-  [92] = {.lex_state = 5, .external_lex_state = 11},
+  [92] = {.lex_state = 4, .external_lex_state = 11},
   [93] = {.lex_state = 7, .external_lex_state = 7},
-  [94] = {.lex_state = 5, .external_lex_state = 11},
-  [95] = {.lex_state = 5, .external_lex_state = 11},
-  [96] = {.lex_state = 5, .external_lex_state = 11},
+  [94] = {.lex_state = 4, .external_lex_state = 11},
+  [95] = {.lex_state = 4, .external_lex_state = 11},
+  [96] = {.lex_state = 4, .external_lex_state = 11},
   [97] = {.lex_state = 7, .external_lex_state = 7},
   [98] = {.lex_state = 7, .external_lex_state = 7},
   [99] = {.lex_state = 7, .external_lex_state = 13},
@@ -1794,8 +1793,8 @@ static const TSLexMode ts_lex_modes[STATE_COUNT] = {
   [234] = {.lex_state = 7, .external_lex_state = 17},
   [235] = {.lex_state = 7, .external_lex_state = 17},
   [236] = {.lex_state = 7, .external_lex_state = 17},
-  [237] = {.lex_state = 5, .external_lex_state = 35},
-  [238] = {.lex_state = 5, .external_lex_state = 35},
+  [237] = {.lex_state = 4, .external_lex_state = 35},
+  [238] = {.lex_state = 4, .external_lex_state = 35},
   [239] = {.lex_state = 7, .external_lex_state = 25},
   [240] = {.lex_state = 7, .external_lex_state = 27},
   [241] = {.lex_state = 7, .external_lex_state = 28},
@@ -1809,7 +1808,7 @@ static const TSLexMode ts_lex_modes[STATE_COUNT] = {
   [249] = {.lex_state = 7, .external_lex_state = 29},
   [250] = {.lex_state = 7, .external_lex_state = 36},
   [251] = {.lex_state = 7, .external_lex_state = 36},
-  [252] = {.lex_state = 5, .external_lex_state = 35},
+  [252] = {.lex_state = 4, .external_lex_state = 35},
   [253] = {.lex_state = 7, .external_lex_state = 29},
   [254] = {.lex_state = 7, .external_lex_state = 28},
   [255] = {.lex_state = 7, .external_lex_state = 28},
@@ -1924,549 +1923,15 @@ static const TSLexMode ts_lex_modes[STATE_COUNT] = {
   [364] = {.lex_state = 7},
 };
 
-enum {
-  ts_external_token__newline = 0,
-  ts_external_token__blankline = 1,
-  ts_external_token__indent = 2,
-  ts_external_token__newline_indent = 3,
-  ts_external_token__dedent = 4,
-  ts_external_token__overline = 5,
-  ts_external_token__underline = 6,
-  ts_external_token_transition = 7,
-  ts_external_token__char_bullet = 8,
-  ts_external_token__numeric_bullet = 9,
-  ts_external_token__field_mark = 10,
-  ts_external_token__field_mark_end = 11,
-  ts_external_token__literal_indented_block_mark = 12,
-  ts_external_token__literal_quoted_block_mark = 13,
-  ts_external_token__quoted_literal_block = 14,
-  ts_external_token__line_block_mark = 15,
-  ts_external_token__attribution_mark = 16,
-  ts_external_token__doctest_block_mark = 17,
-  ts_external_token__text = 18,
-  ts_external_token_emphasis = 19,
-  ts_external_token_strong = 20,
-  ts_external_token__interpreted_text = 21,
-  ts_external_token__interpreted_text_prefix = 22,
-  ts_external_token__role_name_prefix = 23,
-  ts_external_token__role_name_suffix = 24,
-  ts_external_token_literal = 25,
-  ts_external_token_substitution_reference = 26,
-  ts_external_token_inline_target = 27,
-  ts_external_token_footnote_reference = 28,
-  ts_external_token_citation_reference = 29,
-  ts_external_token_reference = 30,
-  ts_external_token_standalone_hyperlink = 31,
-  ts_external_token__explicit_markup_start = 32,
-  ts_external_token__footnote_label = 33,
-  ts_external_token__citation_label = 34,
-  ts_external_token__target_name = 35,
-  ts_external_token__anonymous_target_mark = 36,
-  ts_external_token__directive_name = 37,
-  ts_external_token__substitution_mark = 38,
-  ts_external_token__empty_comment = 39,
-  ts_external_token__invalid_token = 40,
-};
-
-static const TSSymbol ts_external_scanner_symbol_map[EXTERNAL_TOKEN_COUNT] = {
-  [ts_external_token__newline] = sym__newline,
-  [ts_external_token__blankline] = sym__blankline,
-  [ts_external_token__indent] = sym__indent,
-  [ts_external_token__newline_indent] = sym__newline_indent,
-  [ts_external_token__dedent] = sym__dedent,
-  [ts_external_token__overline] = sym__overline,
-  [ts_external_token__underline] = sym__underline,
-  [ts_external_token_transition] = sym_transition,
-  [ts_external_token__char_bullet] = sym__char_bullet,
-  [ts_external_token__numeric_bullet] = sym__numeric_bullet,
-  [ts_external_token__field_mark] = sym__field_mark,
-  [ts_external_token__field_mark_end] = sym__field_mark_end,
-  [ts_external_token__literal_indented_block_mark] = sym__literal_indented_block_mark,
-  [ts_external_token__literal_quoted_block_mark] = sym__literal_quoted_block_mark,
-  [ts_external_token__quoted_literal_block] = sym__quoted_literal_block,
-  [ts_external_token__line_block_mark] = sym__line_block_mark,
-  [ts_external_token__attribution_mark] = sym__attribution_mark,
-  [ts_external_token__doctest_block_mark] = sym__doctest_block_mark,
-  [ts_external_token__text] = sym__text,
-  [ts_external_token_emphasis] = sym_emphasis,
-  [ts_external_token_strong] = sym_strong,
-  [ts_external_token__interpreted_text] = sym__interpreted_text,
-  [ts_external_token__interpreted_text_prefix] = sym__interpreted_text_prefix,
-  [ts_external_token__role_name_prefix] = sym__role_name_prefix,
-  [ts_external_token__role_name_suffix] = sym__role_name_suffix,
-  [ts_external_token_literal] = sym_literal,
-  [ts_external_token_substitution_reference] = sym_substitution_reference,
-  [ts_external_token_inline_target] = sym_inline_target,
-  [ts_external_token_footnote_reference] = sym_footnote_reference,
-  [ts_external_token_citation_reference] = sym_citation_reference,
-  [ts_external_token_reference] = sym_reference,
-  [ts_external_token_standalone_hyperlink] = sym_standalone_hyperlink,
-  [ts_external_token__explicit_markup_start] = sym__explicit_markup_start,
-  [ts_external_token__footnote_label] = sym__footnote_label,
-  [ts_external_token__citation_label] = sym__citation_label,
-  [ts_external_token__target_name] = sym__target_name,
-  [ts_external_token__anonymous_target_mark] = sym__anonymous_target_mark,
-  [ts_external_token__directive_name] = sym__directive_name,
-  [ts_external_token__substitution_mark] = sym__substitution_mark,
-  [ts_external_token__empty_comment] = sym__empty_comment,
-  [ts_external_token__invalid_token] = sym__invalid_token,
-};
-
-static const bool ts_external_scanner_states[45][EXTERNAL_TOKEN_COUNT] = {
-  [1] = {
-    [ts_external_token__newline] = true,
-    [ts_external_token__blankline] = true,
-    [ts_external_token__indent] = true,
-    [ts_external_token__newline_indent] = true,
-    [ts_external_token__dedent] = true,
-    [ts_external_token__overline] = true,
-    [ts_external_token__underline] = true,
-    [ts_external_token_transition] = true,
-    [ts_external_token__char_bullet] = true,
-    [ts_external_token__numeric_bullet] = true,
-    [ts_external_token__field_mark] = true,
-    [ts_external_token__field_mark_end] = true,
-    [ts_external_token__literal_indented_block_mark] = true,
-    [ts_external_token__literal_quoted_block_mark] = true,
-    [ts_external_token__quoted_literal_block] = true,
-    [ts_external_token__line_block_mark] = true,
-    [ts_external_token__attribution_mark] = true,
-    [ts_external_token__doctest_block_mark] = true,
-    [ts_external_token__text] = true,
-    [ts_external_token_emphasis] = true,
-    [ts_external_token_strong] = true,
-    [ts_external_token__interpreted_text] = true,
-    [ts_external_token__interpreted_text_prefix] = true,
-    [ts_external_token__role_name_prefix] = true,
-    [ts_external_token__role_name_suffix] = true,
-    [ts_external_token_literal] = true,
-    [ts_external_token_substitution_reference] = true,
-    [ts_external_token_inline_target] = true,
-    [ts_external_token_footnote_reference] = true,
-    [ts_external_token_citation_reference] = true,
-    [ts_external_token_reference] = true,
-    [ts_external_token_standalone_hyperlink] = true,
-    [ts_external_token__explicit_markup_start] = true,
-    [ts_external_token__footnote_label] = true,
-    [ts_external_token__citation_label] = true,
-    [ts_external_token__target_name] = true,
-    [ts_external_token__anonymous_target_mark] = true,
-    [ts_external_token__directive_name] = true,
-    [ts_external_token__substitution_mark] = true,
-    [ts_external_token__empty_comment] = true,
-    [ts_external_token__invalid_token] = true,
-  },
-  [2] = {
-    [ts_external_token__indent] = true,
-    [ts_external_token__overline] = true,
-    [ts_external_token_transition] = true,
-    [ts_external_token__char_bullet] = true,
-    [ts_external_token__numeric_bullet] = true,
-    [ts_external_token__field_mark] = true,
-    [ts_external_token__literal_indented_block_mark] = true,
-    [ts_external_token__literal_quoted_block_mark] = true,
-    [ts_external_token__line_block_mark] = true,
-    [ts_external_token__doctest_block_mark] = true,
-    [ts_external_token__text] = true,
-    [ts_external_token_emphasis] = true,
-    [ts_external_token_strong] = true,
-    [ts_external_token__interpreted_text] = true,
-    [ts_external_token__interpreted_text_prefix] = true,
-    [ts_external_token__role_name_prefix] = true,
-    [ts_external_token_literal] = true,
-    [ts_external_token_substitution_reference] = true,
-    [ts_external_token_inline_target] = true,
-    [ts_external_token_footnote_reference] = true,
-    [ts_external_token_citation_reference] = true,
-    [ts_external_token_reference] = true,
-    [ts_external_token_standalone_hyperlink] = true,
-    [ts_external_token__explicit_markup_start] = true,
-    [ts_external_token__anonymous_target_mark] = true,
-    [ts_external_token__empty_comment] = true,
-  },
-  [3] = {
-    [ts_external_token__indent] = true,
-    [ts_external_token__char_bullet] = true,
-    [ts_external_token__numeric_bullet] = true,
-    [ts_external_token__field_mark] = true,
-    [ts_external_token__literal_indented_block_mark] = true,
-    [ts_external_token__literal_quoted_block_mark] = true,
-    [ts_external_token__line_block_mark] = true,
-    [ts_external_token__attribution_mark] = true,
-    [ts_external_token__doctest_block_mark] = true,
-    [ts_external_token__text] = true,
-    [ts_external_token_emphasis] = true,
-    [ts_external_token_strong] = true,
-    [ts_external_token__interpreted_text] = true,
-    [ts_external_token__interpreted_text_prefix] = true,
-    [ts_external_token__role_name_prefix] = true,
-    [ts_external_token_literal] = true,
-    [ts_external_token_substitution_reference] = true,
-    [ts_external_token_inline_target] = true,
-    [ts_external_token_footnote_reference] = true,
-    [ts_external_token_citation_reference] = true,
-    [ts_external_token_reference] = true,
-    [ts_external_token_standalone_hyperlink] = true,
-    [ts_external_token__explicit_markup_start] = true,
-    [ts_external_token__anonymous_target_mark] = true,
-    [ts_external_token__empty_comment] = true,
-  },
-  [4] = {
-    [ts_external_token__indent] = true,
-    [ts_external_token__dedent] = true,
-    [ts_external_token__char_bullet] = true,
-    [ts_external_token__numeric_bullet] = true,
-    [ts_external_token__field_mark] = true,
-    [ts_external_token__literal_indented_block_mark] = true,
-    [ts_external_token__literal_quoted_block_mark] = true,
-    [ts_external_token__line_block_mark] = true,
-    [ts_external_token__doctest_block_mark] = true,
-    [ts_external_token__text] = true,
-    [ts_external_token_emphasis] = true,
-    [ts_external_token_strong] = true,
-    [ts_external_token__interpreted_text] = true,
-    [ts_external_token__interpreted_text_prefix] = true,
-    [ts_external_token__role_name_prefix] = true,
-    [ts_external_token_literal] = true,
-    [ts_external_token_substitution_reference] = true,
-    [ts_external_token_inline_target] = true,
-    [ts_external_token_footnote_reference] = true,
-    [ts_external_token_citation_reference] = true,
-    [ts_external_token_reference] = true,
-    [ts_external_token_standalone_hyperlink] = true,
-    [ts_external_token__explicit_markup_start] = true,
-    [ts_external_token__anonymous_target_mark] = true,
-    [ts_external_token__empty_comment] = true,
-  },
-  [5] = {
-    [ts_external_token__indent] = true,
-    [ts_external_token__char_bullet] = true,
-    [ts_external_token__numeric_bullet] = true,
-    [ts_external_token__field_mark] = true,
-    [ts_external_token__literal_indented_block_mark] = true,
-    [ts_external_token__literal_quoted_block_mark] = true,
-    [ts_external_token__line_block_mark] = true,
-    [ts_external_token__doctest_block_mark] = true,
-    [ts_external_token__text] = true,
-    [ts_external_token_emphasis] = true,
-    [ts_external_token_strong] = true,
-    [ts_external_token__interpreted_text] = true,
-    [ts_external_token__interpreted_text_prefix] = true,
-    [ts_external_token__role_name_prefix] = true,
-    [ts_external_token_literal] = true,
-    [ts_external_token_substitution_reference] = true,
-    [ts_external_token_inline_target] = true,
-    [ts_external_token_footnote_reference] = true,
-    [ts_external_token_citation_reference] = true,
-    [ts_external_token_reference] = true,
-    [ts_external_token_standalone_hyperlink] = true,
-    [ts_external_token__explicit_markup_start] = true,
-    [ts_external_token__anonymous_target_mark] = true,
-    [ts_external_token__empty_comment] = true,
-  },
-  [6] = {
-    [ts_external_token__newline] = true,
-    [ts_external_token__newline_indent] = true,
-    [ts_external_token__literal_indented_block_mark] = true,
-    [ts_external_token__literal_quoted_block_mark] = true,
-    [ts_external_token__text] = true,
-    [ts_external_token_emphasis] = true,
-    [ts_external_token_strong] = true,
-    [ts_external_token__interpreted_text] = true,
-    [ts_external_token__interpreted_text_prefix] = true,
-    [ts_external_token__role_name_prefix] = true,
-    [ts_external_token_literal] = true,
-    [ts_external_token_substitution_reference] = true,
-    [ts_external_token_inline_target] = true,
-    [ts_external_token_footnote_reference] = true,
-    [ts_external_token_citation_reference] = true,
-    [ts_external_token_reference] = true,
-    [ts_external_token_standalone_hyperlink] = true,
-  },
-  [7] = {
-    [ts_external_token__blankline] = true,
-    [ts_external_token__dedent] = true,
-    [ts_external_token__text] = true,
-    [ts_external_token_emphasis] = true,
-    [ts_external_token_strong] = true,
-    [ts_external_token__interpreted_text] = true,
-    [ts_external_token__interpreted_text_prefix] = true,
-    [ts_external_token__role_name_prefix] = true,
-    [ts_external_token_literal] = true,
-    [ts_external_token_substitution_reference] = true,
-    [ts_external_token_inline_target] = true,
-    [ts_external_token_footnote_reference] = true,
-    [ts_external_token_citation_reference] = true,
-    [ts_external_token_reference] = true,
-    [ts_external_token_standalone_hyperlink] = true,
-  },
-  [8] = {
-    [ts_external_token__newline] = true,
-    [ts_external_token__literal_indented_block_mark] = true,
-    [ts_external_token__literal_quoted_block_mark] = true,
-    [ts_external_token__text] = true,
-    [ts_external_token_emphasis] = true,
-    [ts_external_token_strong] = true,
-    [ts_external_token__interpreted_text] = true,
-    [ts_external_token__interpreted_text_prefix] = true,
-    [ts_external_token__role_name_prefix] = true,
-    [ts_external_token_literal] = true,
-    [ts_external_token_substitution_reference] = true,
-    [ts_external_token_inline_target] = true,
-    [ts_external_token_footnote_reference] = true,
-    [ts_external_token_citation_reference] = true,
-    [ts_external_token_reference] = true,
-    [ts_external_token_standalone_hyperlink] = true,
-  },
-  [9] = {
-    [ts_external_token__blankline] = true,
-    [ts_external_token__text] = true,
-    [ts_external_token_emphasis] = true,
-    [ts_external_token_strong] = true,
-    [ts_external_token__interpreted_text] = true,
-    [ts_external_token__interpreted_text_prefix] = true,
-    [ts_external_token__role_name_prefix] = true,
-    [ts_external_token_literal] = true,
-    [ts_external_token_substitution_reference] = true,
-    [ts_external_token_inline_target] = true,
-    [ts_external_token_footnote_reference] = true,
-    [ts_external_token_citation_reference] = true,
-    [ts_external_token_reference] = true,
-    [ts_external_token_standalone_hyperlink] = true,
-  },
-  [10] = {
-    [ts_external_token__dedent] = true,
-    [ts_external_token__text] = true,
-    [ts_external_token_emphasis] = true,
-    [ts_external_token_strong] = true,
-    [ts_external_token__interpreted_text] = true,
-    [ts_external_token__interpreted_text_prefix] = true,
-    [ts_external_token__role_name_prefix] = true,
-    [ts_external_token_literal] = true,
-    [ts_external_token_substitution_reference] = true,
-    [ts_external_token_inline_target] = true,
-    [ts_external_token_footnote_reference] = true,
-    [ts_external_token_citation_reference] = true,
-    [ts_external_token_reference] = true,
-    [ts_external_token_standalone_hyperlink] = true,
-  },
-  [11] = {
-    [ts_external_token__newline_indent] = true,
-    [ts_external_token__text] = true,
-    [ts_external_token_emphasis] = true,
-    [ts_external_token_strong] = true,
-    [ts_external_token__interpreted_text] = true,
-    [ts_external_token__interpreted_text_prefix] = true,
-    [ts_external_token__role_name_prefix] = true,
-    [ts_external_token_literal] = true,
-    [ts_external_token_substitution_reference] = true,
-    [ts_external_token_inline_target] = true,
-    [ts_external_token_footnote_reference] = true,
-    [ts_external_token_citation_reference] = true,
-    [ts_external_token_reference] = true,
-    [ts_external_token_standalone_hyperlink] = true,
-  },
-  [12] = {
-    [ts_external_token__text] = true,
-    [ts_external_token_emphasis] = true,
-    [ts_external_token_strong] = true,
-    [ts_external_token__interpreted_text] = true,
-    [ts_external_token__interpreted_text_prefix] = true,
-    [ts_external_token__role_name_prefix] = true,
-    [ts_external_token_literal] = true,
-    [ts_external_token_substitution_reference] = true,
-    [ts_external_token_inline_target] = true,
-    [ts_external_token_footnote_reference] = true,
-    [ts_external_token_citation_reference] = true,
-    [ts_external_token_reference] = true,
-    [ts_external_token_standalone_hyperlink] = true,
-  },
-  [13] = {
-    [ts_external_token__field_mark_end] = true,
-    [ts_external_token__text] = true,
-    [ts_external_token_emphasis] = true,
-    [ts_external_token_strong] = true,
-    [ts_external_token__interpreted_text] = true,
-    [ts_external_token__interpreted_text_prefix] = true,
-    [ts_external_token__role_name_prefix] = true,
-    [ts_external_token_literal] = true,
-    [ts_external_token_substitution_reference] = true,
-    [ts_external_token_inline_target] = true,
-    [ts_external_token_footnote_reference] = true,
-    [ts_external_token_citation_reference] = true,
-    [ts_external_token_reference] = true,
-    [ts_external_token_standalone_hyperlink] = true,
-  },
-  [14] = {
-    [ts_external_token__newline] = true,
-    [ts_external_token__text] = true,
-    [ts_external_token_emphasis] = true,
-    [ts_external_token_strong] = true,
-    [ts_external_token__interpreted_text] = true,
-    [ts_external_token__interpreted_text_prefix] = true,
-    [ts_external_token__role_name_prefix] = true,
-    [ts_external_token_literal] = true,
-    [ts_external_token_substitution_reference] = true,
-    [ts_external_token_inline_target] = true,
-    [ts_external_token_footnote_reference] = true,
-    [ts_external_token_citation_reference] = true,
-    [ts_external_token_reference] = true,
-    [ts_external_token_standalone_hyperlink] = true,
-  },
-  [15] = {
-    [ts_external_token__blankline] = true,
-    [ts_external_token__underline] = true,
-    [ts_external_token__text] = true,
-    [ts_external_token_emphasis] = true,
-    [ts_external_token_strong] = true,
-    [ts_external_token__interpreted_text] = true,
-    [ts_external_token__interpreted_text_prefix] = true,
-    [ts_external_token__role_name_prefix] = true,
-    [ts_external_token_literal] = true,
-    [ts_external_token_substitution_reference] = true,
-    [ts_external_token_inline_target] = true,
-    [ts_external_token_footnote_reference] = true,
-    [ts_external_token_citation_reference] = true,
-    [ts_external_token_reference] = true,
-    [ts_external_token_standalone_hyperlink] = true,
-  },
-  [16] = {
-    [ts_external_token__blankline] = true,
-    [ts_external_token__dedent] = true,
-    [ts_external_token__explicit_markup_start] = true,
-    [ts_external_token__anonymous_target_mark] = true,
-    [ts_external_token__empty_comment] = true,
-  },
-  [17] = {
-    [ts_external_token__blankline] = true,
-    [ts_external_token__explicit_markup_start] = true,
-    [ts_external_token__anonymous_target_mark] = true,
-    [ts_external_token__empty_comment] = true,
-  },
-  [18] = {
-    [ts_external_token__blankline] = true,
-    [ts_external_token__dedent] = true,
-    [ts_external_token__field_mark] = true,
-    [ts_external_token__text] = true,
-  },
-  [19] = {
-    [ts_external_token__dedent] = true,
-    [ts_external_token__text] = true,
-    [ts_external_token__footnote_label] = true,
-    [ts_external_token__citation_label] = true,
-    [ts_external_token__target_name] = true,
-    [ts_external_token__directive_name] = true,
-    [ts_external_token__substitution_mark] = true,
-  },
-  [20] = {
-    [ts_external_token__newline] = true,
-    [ts_external_token__blankline] = true,
-    [ts_external_token__dedent] = true,
-    [ts_external_token__field_mark] = true,
-    [ts_external_token__text] = true,
-  },
-  [21] = {
-    [ts_external_token__field_mark] = true,
-    [ts_external_token__text] = true,
-  },
-  [22] = {
-    [ts_external_token__dedent] = true,
-    [ts_external_token__text] = true,
-  },
-  [23] = {
-    [ts_external_token__text] = true,
-  },
-  [24] = {
-    [ts_external_token__newline] = true,
-  },
-  [25] = {
-    [ts_external_token__blankline] = true,
-    [ts_external_token__dedent] = true,
-    [ts_external_token__text] = true,
-  },
-  [26] = {
-    [ts_external_token__blankline] = true,
-    [ts_external_token__dedent] = true,
-    [ts_external_token__numeric_bullet] = true,
-  },
-  [27] = {
-    [ts_external_token__blankline] = true,
-    [ts_external_token__dedent] = true,
-    [ts_external_token__char_bullet] = true,
-  },
-  [28] = {
-    [ts_external_token__blankline] = true,
-    [ts_external_token__dedent] = true,
-    [ts_external_token__field_mark] = true,
-  },
-  [29] = {
-    [ts_external_token__blankline] = true,
-    [ts_external_token__dedent] = true,
-    [ts_external_token__line_block_mark] = true,
-  },
-  [30] = {
-    [ts_external_token__blankline] = true,
-    [ts_external_token__text] = true,
-  },
-  [31] = {
-    [ts_external_token__blankline] = true,
-    [ts_external_token__field_mark] = true,
-  },
-  [32] = {
-    [ts_external_token__blankline] = true,
-    [ts_external_token__line_block_mark] = true,
-  },
-  [33] = {
-    [ts_external_token__blankline] = true,
-    [ts_external_token__numeric_bullet] = true,
-  },
-  [34] = {
-    [ts_external_token__blankline] = true,
-    [ts_external_token__char_bullet] = true,
-  },
-  [35] = {
-    [ts_external_token__newline_indent] = true,
-  },
-  [36] = {
-    [ts_external_token__newline] = true,
-    [ts_external_token__text] = true,
-  },
-  [37] = {
-    [ts_external_token__blankline] = true,
-    [ts_external_token__dedent] = true,
-  },
-  [38] = {
-    [ts_external_token__dedent] = true,
-  },
-  [39] = {
-    [ts_external_token__directive_name] = true,
-  },
-  [40] = {
-    [ts_external_token__blankline] = true,
-  },
-  [41] = {
-    [ts_external_token__quoted_literal_block] = true,
-  },
-  [42] = {
-    [ts_external_token__underline] = true,
-  },
-  [43] = {
-    [ts_external_token__role_name_suffix] = true,
-  },
-  [44] = {
-    [ts_external_token__interpreted_text] = true,
-  },
-};
-
 static const uint16_t ts_parse_table[LARGE_STATE_COUNT][SYMBOL_COUNT] = {
   [0] = {
     [ts_builtin_sym_end] = ACTIONS(1),
     [anon_sym_COLON_COLON] = ACTIONS(1),
-    [anon_sym_] = ACTIONS(1),
+    [anon_sym_SPACE] = ACTIONS(1),
     [anon_sym_TAB] = ACTIONS(1),
-    [anon_sym_2] = ACTIONS(1),
-    [anon_sym_3] = ACTIONS(1),
-    [anon_sym_4] = ACTIONS(1),
+    [anon_sym_VTAB] = ACTIONS(1),
+    [anon_sym_FF] = ACTIONS(1),
+    [anon_sym_u00a0] = ACTIONS(1),
     [sym___newline] = ACTIONS(3),
     [sym___whitespace] = ACTIONS(5),
     [sym__newline] = ACTIONS(1),
@@ -7539,11 +7004,11 @@ static const uint16_t ts_small_parse_table[] = {
     ACTIONS(481), 1,
       sym__newline,
     ACTIONS(479), 5,
-      anon_sym_,
+      anon_sym_SPACE,
       anon_sym_TAB,
-      anon_sym_2,
-      anon_sym_3,
-      anon_sym_4,
+      anon_sym_VTAB,
+      anon_sym_FF,
+      anon_sym_u00a0,
   [3443] = 6,
     ACTIONS(425), 1,
       sym__text,
@@ -7672,11 +7137,11 @@ static const uint16_t ts_small_parse_table[] = {
     ACTIONS(491), 1,
       sym__newline,
     ACTIONS(489), 5,
-      anon_sym_,
+      anon_sym_SPACE,
       anon_sym_TAB,
-      anon_sym_2,
-      anon_sym_3,
-      anon_sym_4,
+      anon_sym_VTAB,
+      anon_sym_FF,
+      anon_sym_u00a0,
   [3628] = 6,
     ACTIONS(425), 1,
       sym__text,
@@ -10311,6 +9776,540 @@ static const TSParseActionEntry ts_parse_actions[] = {
   [818] = {.entry = {.count = 1, .reusable = true}}, SHIFT(144),
 };
 
+enum ts_external_scanner_symbol_identifiers {
+  ts_external_token__newline = 0,
+  ts_external_token__blankline = 1,
+  ts_external_token__indent = 2,
+  ts_external_token__newline_indent = 3,
+  ts_external_token__dedent = 4,
+  ts_external_token__overline = 5,
+  ts_external_token__underline = 6,
+  ts_external_token_transition = 7,
+  ts_external_token__char_bullet = 8,
+  ts_external_token__numeric_bullet = 9,
+  ts_external_token__field_mark = 10,
+  ts_external_token__field_mark_end = 11,
+  ts_external_token__literal_indented_block_mark = 12,
+  ts_external_token__literal_quoted_block_mark = 13,
+  ts_external_token__quoted_literal_block = 14,
+  ts_external_token__line_block_mark = 15,
+  ts_external_token__attribution_mark = 16,
+  ts_external_token__doctest_block_mark = 17,
+  ts_external_token__text = 18,
+  ts_external_token_emphasis = 19,
+  ts_external_token_strong = 20,
+  ts_external_token__interpreted_text = 21,
+  ts_external_token__interpreted_text_prefix = 22,
+  ts_external_token__role_name_prefix = 23,
+  ts_external_token__role_name_suffix = 24,
+  ts_external_token_literal = 25,
+  ts_external_token_substitution_reference = 26,
+  ts_external_token_inline_target = 27,
+  ts_external_token_footnote_reference = 28,
+  ts_external_token_citation_reference = 29,
+  ts_external_token_reference = 30,
+  ts_external_token_standalone_hyperlink = 31,
+  ts_external_token__explicit_markup_start = 32,
+  ts_external_token__footnote_label = 33,
+  ts_external_token__citation_label = 34,
+  ts_external_token__target_name = 35,
+  ts_external_token__anonymous_target_mark = 36,
+  ts_external_token__directive_name = 37,
+  ts_external_token__substitution_mark = 38,
+  ts_external_token__empty_comment = 39,
+  ts_external_token__invalid_token = 40,
+};
+
+static const TSSymbol ts_external_scanner_symbol_map[EXTERNAL_TOKEN_COUNT] = {
+  [ts_external_token__newline] = sym__newline,
+  [ts_external_token__blankline] = sym__blankline,
+  [ts_external_token__indent] = sym__indent,
+  [ts_external_token__newline_indent] = sym__newline_indent,
+  [ts_external_token__dedent] = sym__dedent,
+  [ts_external_token__overline] = sym__overline,
+  [ts_external_token__underline] = sym__underline,
+  [ts_external_token_transition] = sym_transition,
+  [ts_external_token__char_bullet] = sym__char_bullet,
+  [ts_external_token__numeric_bullet] = sym__numeric_bullet,
+  [ts_external_token__field_mark] = sym__field_mark,
+  [ts_external_token__field_mark_end] = sym__field_mark_end,
+  [ts_external_token__literal_indented_block_mark] = sym__literal_indented_block_mark,
+  [ts_external_token__literal_quoted_block_mark] = sym__literal_quoted_block_mark,
+  [ts_external_token__quoted_literal_block] = sym__quoted_literal_block,
+  [ts_external_token__line_block_mark] = sym__line_block_mark,
+  [ts_external_token__attribution_mark] = sym__attribution_mark,
+  [ts_external_token__doctest_block_mark] = sym__doctest_block_mark,
+  [ts_external_token__text] = sym__text,
+  [ts_external_token_emphasis] = sym_emphasis,
+  [ts_external_token_strong] = sym_strong,
+  [ts_external_token__interpreted_text] = sym__interpreted_text,
+  [ts_external_token__interpreted_text_prefix] = sym__interpreted_text_prefix,
+  [ts_external_token__role_name_prefix] = sym__role_name_prefix,
+  [ts_external_token__role_name_suffix] = sym__role_name_suffix,
+  [ts_external_token_literal] = sym_literal,
+  [ts_external_token_substitution_reference] = sym_substitution_reference,
+  [ts_external_token_inline_target] = sym_inline_target,
+  [ts_external_token_footnote_reference] = sym_footnote_reference,
+  [ts_external_token_citation_reference] = sym_citation_reference,
+  [ts_external_token_reference] = sym_reference,
+  [ts_external_token_standalone_hyperlink] = sym_standalone_hyperlink,
+  [ts_external_token__explicit_markup_start] = sym__explicit_markup_start,
+  [ts_external_token__footnote_label] = sym__footnote_label,
+  [ts_external_token__citation_label] = sym__citation_label,
+  [ts_external_token__target_name] = sym__target_name,
+  [ts_external_token__anonymous_target_mark] = sym__anonymous_target_mark,
+  [ts_external_token__directive_name] = sym__directive_name,
+  [ts_external_token__substitution_mark] = sym__substitution_mark,
+  [ts_external_token__empty_comment] = sym__empty_comment,
+  [ts_external_token__invalid_token] = sym__invalid_token,
+};
+
+static const bool ts_external_scanner_states[45][EXTERNAL_TOKEN_COUNT] = {
+  [1] = {
+    [ts_external_token__newline] = true,
+    [ts_external_token__blankline] = true,
+    [ts_external_token__indent] = true,
+    [ts_external_token__newline_indent] = true,
+    [ts_external_token__dedent] = true,
+    [ts_external_token__overline] = true,
+    [ts_external_token__underline] = true,
+    [ts_external_token_transition] = true,
+    [ts_external_token__char_bullet] = true,
+    [ts_external_token__numeric_bullet] = true,
+    [ts_external_token__field_mark] = true,
+    [ts_external_token__field_mark_end] = true,
+    [ts_external_token__literal_indented_block_mark] = true,
+    [ts_external_token__literal_quoted_block_mark] = true,
+    [ts_external_token__quoted_literal_block] = true,
+    [ts_external_token__line_block_mark] = true,
+    [ts_external_token__attribution_mark] = true,
+    [ts_external_token__doctest_block_mark] = true,
+    [ts_external_token__text] = true,
+    [ts_external_token_emphasis] = true,
+    [ts_external_token_strong] = true,
+    [ts_external_token__interpreted_text] = true,
+    [ts_external_token__interpreted_text_prefix] = true,
+    [ts_external_token__role_name_prefix] = true,
+    [ts_external_token__role_name_suffix] = true,
+    [ts_external_token_literal] = true,
+    [ts_external_token_substitution_reference] = true,
+    [ts_external_token_inline_target] = true,
+    [ts_external_token_footnote_reference] = true,
+    [ts_external_token_citation_reference] = true,
+    [ts_external_token_reference] = true,
+    [ts_external_token_standalone_hyperlink] = true,
+    [ts_external_token__explicit_markup_start] = true,
+    [ts_external_token__footnote_label] = true,
+    [ts_external_token__citation_label] = true,
+    [ts_external_token__target_name] = true,
+    [ts_external_token__anonymous_target_mark] = true,
+    [ts_external_token__directive_name] = true,
+    [ts_external_token__substitution_mark] = true,
+    [ts_external_token__empty_comment] = true,
+    [ts_external_token__invalid_token] = true,
+  },
+  [2] = {
+    [ts_external_token__indent] = true,
+    [ts_external_token__overline] = true,
+    [ts_external_token_transition] = true,
+    [ts_external_token__char_bullet] = true,
+    [ts_external_token__numeric_bullet] = true,
+    [ts_external_token__field_mark] = true,
+    [ts_external_token__literal_indented_block_mark] = true,
+    [ts_external_token__literal_quoted_block_mark] = true,
+    [ts_external_token__line_block_mark] = true,
+    [ts_external_token__doctest_block_mark] = true,
+    [ts_external_token__text] = true,
+    [ts_external_token_emphasis] = true,
+    [ts_external_token_strong] = true,
+    [ts_external_token__interpreted_text] = true,
+    [ts_external_token__interpreted_text_prefix] = true,
+    [ts_external_token__role_name_prefix] = true,
+    [ts_external_token_literal] = true,
+    [ts_external_token_substitution_reference] = true,
+    [ts_external_token_inline_target] = true,
+    [ts_external_token_footnote_reference] = true,
+    [ts_external_token_citation_reference] = true,
+    [ts_external_token_reference] = true,
+    [ts_external_token_standalone_hyperlink] = true,
+    [ts_external_token__explicit_markup_start] = true,
+    [ts_external_token__anonymous_target_mark] = true,
+    [ts_external_token__empty_comment] = true,
+  },
+  [3] = {
+    [ts_external_token__indent] = true,
+    [ts_external_token__char_bullet] = true,
+    [ts_external_token__numeric_bullet] = true,
+    [ts_external_token__field_mark] = true,
+    [ts_external_token__literal_indented_block_mark] = true,
+    [ts_external_token__literal_quoted_block_mark] = true,
+    [ts_external_token__line_block_mark] = true,
+    [ts_external_token__attribution_mark] = true,
+    [ts_external_token__doctest_block_mark] = true,
+    [ts_external_token__text] = true,
+    [ts_external_token_emphasis] = true,
+    [ts_external_token_strong] = true,
+    [ts_external_token__interpreted_text] = true,
+    [ts_external_token__interpreted_text_prefix] = true,
+    [ts_external_token__role_name_prefix] = true,
+    [ts_external_token_literal] = true,
+    [ts_external_token_substitution_reference] = true,
+    [ts_external_token_inline_target] = true,
+    [ts_external_token_footnote_reference] = true,
+    [ts_external_token_citation_reference] = true,
+    [ts_external_token_reference] = true,
+    [ts_external_token_standalone_hyperlink] = true,
+    [ts_external_token__explicit_markup_start] = true,
+    [ts_external_token__anonymous_target_mark] = true,
+    [ts_external_token__empty_comment] = true,
+  },
+  [4] = {
+    [ts_external_token__indent] = true,
+    [ts_external_token__dedent] = true,
+    [ts_external_token__char_bullet] = true,
+    [ts_external_token__numeric_bullet] = true,
+    [ts_external_token__field_mark] = true,
+    [ts_external_token__literal_indented_block_mark] = true,
+    [ts_external_token__literal_quoted_block_mark] = true,
+    [ts_external_token__line_block_mark] = true,
+    [ts_external_token__doctest_block_mark] = true,
+    [ts_external_token__text] = true,
+    [ts_external_token_emphasis] = true,
+    [ts_external_token_strong] = true,
+    [ts_external_token__interpreted_text] = true,
+    [ts_external_token__interpreted_text_prefix] = true,
+    [ts_external_token__role_name_prefix] = true,
+    [ts_external_token_literal] = true,
+    [ts_external_token_substitution_reference] = true,
+    [ts_external_token_inline_target] = true,
+    [ts_external_token_footnote_reference] = true,
+    [ts_external_token_citation_reference] = true,
+    [ts_external_token_reference] = true,
+    [ts_external_token_standalone_hyperlink] = true,
+    [ts_external_token__explicit_markup_start] = true,
+    [ts_external_token__anonymous_target_mark] = true,
+    [ts_external_token__empty_comment] = true,
+  },
+  [5] = {
+    [ts_external_token__indent] = true,
+    [ts_external_token__char_bullet] = true,
+    [ts_external_token__numeric_bullet] = true,
+    [ts_external_token__field_mark] = true,
+    [ts_external_token__literal_indented_block_mark] = true,
+    [ts_external_token__literal_quoted_block_mark] = true,
+    [ts_external_token__line_block_mark] = true,
+    [ts_external_token__doctest_block_mark] = true,
+    [ts_external_token__text] = true,
+    [ts_external_token_emphasis] = true,
+    [ts_external_token_strong] = true,
+    [ts_external_token__interpreted_text] = true,
+    [ts_external_token__interpreted_text_prefix] = true,
+    [ts_external_token__role_name_prefix] = true,
+    [ts_external_token_literal] = true,
+    [ts_external_token_substitution_reference] = true,
+    [ts_external_token_inline_target] = true,
+    [ts_external_token_footnote_reference] = true,
+    [ts_external_token_citation_reference] = true,
+    [ts_external_token_reference] = true,
+    [ts_external_token_standalone_hyperlink] = true,
+    [ts_external_token__explicit_markup_start] = true,
+    [ts_external_token__anonymous_target_mark] = true,
+    [ts_external_token__empty_comment] = true,
+  },
+  [6] = {
+    [ts_external_token__newline] = true,
+    [ts_external_token__newline_indent] = true,
+    [ts_external_token__literal_indented_block_mark] = true,
+    [ts_external_token__literal_quoted_block_mark] = true,
+    [ts_external_token__text] = true,
+    [ts_external_token_emphasis] = true,
+    [ts_external_token_strong] = true,
+    [ts_external_token__interpreted_text] = true,
+    [ts_external_token__interpreted_text_prefix] = true,
+    [ts_external_token__role_name_prefix] = true,
+    [ts_external_token_literal] = true,
+    [ts_external_token_substitution_reference] = true,
+    [ts_external_token_inline_target] = true,
+    [ts_external_token_footnote_reference] = true,
+    [ts_external_token_citation_reference] = true,
+    [ts_external_token_reference] = true,
+    [ts_external_token_standalone_hyperlink] = true,
+  },
+  [7] = {
+    [ts_external_token__blankline] = true,
+    [ts_external_token__dedent] = true,
+    [ts_external_token__text] = true,
+    [ts_external_token_emphasis] = true,
+    [ts_external_token_strong] = true,
+    [ts_external_token__interpreted_text] = true,
+    [ts_external_token__interpreted_text_prefix] = true,
+    [ts_external_token__role_name_prefix] = true,
+    [ts_external_token_literal] = true,
+    [ts_external_token_substitution_reference] = true,
+    [ts_external_token_inline_target] = true,
+    [ts_external_token_footnote_reference] = true,
+    [ts_external_token_citation_reference] = true,
+    [ts_external_token_reference] = true,
+    [ts_external_token_standalone_hyperlink] = true,
+  },
+  [8] = {
+    [ts_external_token__newline] = true,
+    [ts_external_token__literal_indented_block_mark] = true,
+    [ts_external_token__literal_quoted_block_mark] = true,
+    [ts_external_token__text] = true,
+    [ts_external_token_emphasis] = true,
+    [ts_external_token_strong] = true,
+    [ts_external_token__interpreted_text] = true,
+    [ts_external_token__interpreted_text_prefix] = true,
+    [ts_external_token__role_name_prefix] = true,
+    [ts_external_token_literal] = true,
+    [ts_external_token_substitution_reference] = true,
+    [ts_external_token_inline_target] = true,
+    [ts_external_token_footnote_reference] = true,
+    [ts_external_token_citation_reference] = true,
+    [ts_external_token_reference] = true,
+    [ts_external_token_standalone_hyperlink] = true,
+  },
+  [9] = {
+    [ts_external_token__blankline] = true,
+    [ts_external_token__text] = true,
+    [ts_external_token_emphasis] = true,
+    [ts_external_token_strong] = true,
+    [ts_external_token__interpreted_text] = true,
+    [ts_external_token__interpreted_text_prefix] = true,
+    [ts_external_token__role_name_prefix] = true,
+    [ts_external_token_literal] = true,
+    [ts_external_token_substitution_reference] = true,
+    [ts_external_token_inline_target] = true,
+    [ts_external_token_footnote_reference] = true,
+    [ts_external_token_citation_reference] = true,
+    [ts_external_token_reference] = true,
+    [ts_external_token_standalone_hyperlink] = true,
+  },
+  [10] = {
+    [ts_external_token__dedent] = true,
+    [ts_external_token__text] = true,
+    [ts_external_token_emphasis] = true,
+    [ts_external_token_strong] = true,
+    [ts_external_token__interpreted_text] = true,
+    [ts_external_token__interpreted_text_prefix] = true,
+    [ts_external_token__role_name_prefix] = true,
+    [ts_external_token_literal] = true,
+    [ts_external_token_substitution_reference] = true,
+    [ts_external_token_inline_target] = true,
+    [ts_external_token_footnote_reference] = true,
+    [ts_external_token_citation_reference] = true,
+    [ts_external_token_reference] = true,
+    [ts_external_token_standalone_hyperlink] = true,
+  },
+  [11] = {
+    [ts_external_token__newline_indent] = true,
+    [ts_external_token__text] = true,
+    [ts_external_token_emphasis] = true,
+    [ts_external_token_strong] = true,
+    [ts_external_token__interpreted_text] = true,
+    [ts_external_token__interpreted_text_prefix] = true,
+    [ts_external_token__role_name_prefix] = true,
+    [ts_external_token_literal] = true,
+    [ts_external_token_substitution_reference] = true,
+    [ts_external_token_inline_target] = true,
+    [ts_external_token_footnote_reference] = true,
+    [ts_external_token_citation_reference] = true,
+    [ts_external_token_reference] = true,
+    [ts_external_token_standalone_hyperlink] = true,
+  },
+  [12] = {
+    [ts_external_token__text] = true,
+    [ts_external_token_emphasis] = true,
+    [ts_external_token_strong] = true,
+    [ts_external_token__interpreted_text] = true,
+    [ts_external_token__interpreted_text_prefix] = true,
+    [ts_external_token__role_name_prefix] = true,
+    [ts_external_token_literal] = true,
+    [ts_external_token_substitution_reference] = true,
+    [ts_external_token_inline_target] = true,
+    [ts_external_token_footnote_reference] = true,
+    [ts_external_token_citation_reference] = true,
+    [ts_external_token_reference] = true,
+    [ts_external_token_standalone_hyperlink] = true,
+  },
+  [13] = {
+    [ts_external_token__field_mark_end] = true,
+    [ts_external_token__text] = true,
+    [ts_external_token_emphasis] = true,
+    [ts_external_token_strong] = true,
+    [ts_external_token__interpreted_text] = true,
+    [ts_external_token__interpreted_text_prefix] = true,
+    [ts_external_token__role_name_prefix] = true,
+    [ts_external_token_literal] = true,
+    [ts_external_token_substitution_reference] = true,
+    [ts_external_token_inline_target] = true,
+    [ts_external_token_footnote_reference] = true,
+    [ts_external_token_citation_reference] = true,
+    [ts_external_token_reference] = true,
+    [ts_external_token_standalone_hyperlink] = true,
+  },
+  [14] = {
+    [ts_external_token__newline] = true,
+    [ts_external_token__text] = true,
+    [ts_external_token_emphasis] = true,
+    [ts_external_token_strong] = true,
+    [ts_external_token__interpreted_text] = true,
+    [ts_external_token__interpreted_text_prefix] = true,
+    [ts_external_token__role_name_prefix] = true,
+    [ts_external_token_literal] = true,
+    [ts_external_token_substitution_reference] = true,
+    [ts_external_token_inline_target] = true,
+    [ts_external_token_footnote_reference] = true,
+    [ts_external_token_citation_reference] = true,
+    [ts_external_token_reference] = true,
+    [ts_external_token_standalone_hyperlink] = true,
+  },
+  [15] = {
+    [ts_external_token__blankline] = true,
+    [ts_external_token__underline] = true,
+    [ts_external_token__text] = true,
+    [ts_external_token_emphasis] = true,
+    [ts_external_token_strong] = true,
+    [ts_external_token__interpreted_text] = true,
+    [ts_external_token__interpreted_text_prefix] = true,
+    [ts_external_token__role_name_prefix] = true,
+    [ts_external_token_literal] = true,
+    [ts_external_token_substitution_reference] = true,
+    [ts_external_token_inline_target] = true,
+    [ts_external_token_footnote_reference] = true,
+    [ts_external_token_citation_reference] = true,
+    [ts_external_token_reference] = true,
+    [ts_external_token_standalone_hyperlink] = true,
+  },
+  [16] = {
+    [ts_external_token__blankline] = true,
+    [ts_external_token__dedent] = true,
+    [ts_external_token__explicit_markup_start] = true,
+    [ts_external_token__anonymous_target_mark] = true,
+    [ts_external_token__empty_comment] = true,
+  },
+  [17] = {
+    [ts_external_token__blankline] = true,
+    [ts_external_token__explicit_markup_start] = true,
+    [ts_external_token__anonymous_target_mark] = true,
+    [ts_external_token__empty_comment] = true,
+  },
+  [18] = {
+    [ts_external_token__blankline] = true,
+    [ts_external_token__dedent] = true,
+    [ts_external_token__field_mark] = true,
+    [ts_external_token__text] = true,
+  },
+  [19] = {
+    [ts_external_token__dedent] = true,
+    [ts_external_token__text] = true,
+    [ts_external_token__footnote_label] = true,
+    [ts_external_token__citation_label] = true,
+    [ts_external_token__target_name] = true,
+    [ts_external_token__directive_name] = true,
+    [ts_external_token__substitution_mark] = true,
+  },
+  [20] = {
+    [ts_external_token__newline] = true,
+    [ts_external_token__blankline] = true,
+    [ts_external_token__dedent] = true,
+    [ts_external_token__field_mark] = true,
+    [ts_external_token__text] = true,
+  },
+  [21] = {
+    [ts_external_token__field_mark] = true,
+    [ts_external_token__text] = true,
+  },
+  [22] = {
+    [ts_external_token__dedent] = true,
+    [ts_external_token__text] = true,
+  },
+  [23] = {
+    [ts_external_token__text] = true,
+  },
+  [24] = {
+    [ts_external_token__newline] = true,
+  },
+  [25] = {
+    [ts_external_token__blankline] = true,
+    [ts_external_token__dedent] = true,
+    [ts_external_token__text] = true,
+  },
+  [26] = {
+    [ts_external_token__blankline] = true,
+    [ts_external_token__dedent] = true,
+    [ts_external_token__numeric_bullet] = true,
+  },
+  [27] = {
+    [ts_external_token__blankline] = true,
+    [ts_external_token__dedent] = true,
+    [ts_external_token__char_bullet] = true,
+  },
+  [28] = {
+    [ts_external_token__blankline] = true,
+    [ts_external_token__dedent] = true,
+    [ts_external_token__field_mark] = true,
+  },
+  [29] = {
+    [ts_external_token__blankline] = true,
+    [ts_external_token__dedent] = true,
+    [ts_external_token__line_block_mark] = true,
+  },
+  [30] = {
+    [ts_external_token__blankline] = true,
+    [ts_external_token__text] = true,
+  },
+  [31] = {
+    [ts_external_token__blankline] = true,
+    [ts_external_token__field_mark] = true,
+  },
+  [32] = {
+    [ts_external_token__blankline] = true,
+    [ts_external_token__line_block_mark] = true,
+  },
+  [33] = {
+    [ts_external_token__blankline] = true,
+    [ts_external_token__numeric_bullet] = true,
+  },
+  [34] = {
+    [ts_external_token__blankline] = true,
+    [ts_external_token__char_bullet] = true,
+  },
+  [35] = {
+    [ts_external_token__newline_indent] = true,
+  },
+  [36] = {
+    [ts_external_token__newline] = true,
+    [ts_external_token__text] = true,
+  },
+  [37] = {
+    [ts_external_token__blankline] = true,
+    [ts_external_token__dedent] = true,
+  },
+  [38] = {
+    [ts_external_token__dedent] = true,
+  },
+  [39] = {
+    [ts_external_token__directive_name] = true,
+  },
+  [40] = {
+    [ts_external_token__blankline] = true,
+  },
+  [41] = {
+    [ts_external_token__quoted_literal_block] = true,
+  },
+  [42] = {
+    [ts_external_token__underline] = true,
+  },
+  [43] = {
+    [ts_external_token__role_name_suffix] = true,
+  },
+  [44] = {
+    [ts_external_token__interpreted_text] = true,
+  },
+};
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -10320,11 +10319,15 @@ bool tree_sitter_rst_external_scanner_scan(void *, TSLexer *, const bool *);
 unsigned tree_sitter_rst_external_scanner_serialize(void *, char *);
 void tree_sitter_rst_external_scanner_deserialize(void *, const char *, unsigned);
 
-#ifdef _WIN32
-#define extern __declspec(dllexport)
+#ifdef TREE_SITTER_HIDE_SYMBOLS
+#define TS_PUBLIC
+#elif defined(_WIN32)
+#define TS_PUBLIC __declspec(dllexport)
+#else
+#define TS_PUBLIC __attribute__((visibility("default")))
 #endif
 
-extern const TSLanguage *tree_sitter_rst(void) {
+TS_PUBLIC const TSLanguage *tree_sitter_rst() {
   static const TSLanguage language = {
     .version = LANGUAGE_VERSION,
     .symbol_count = SYMBOL_COUNT,
