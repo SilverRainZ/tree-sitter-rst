@@ -1,4 +1,4 @@
-package tree_sitter_rst_test
+package tree_sitter_rst2_test
 
 import (
 	"testing"
@@ -8,7 +8,7 @@ import (
 )
 
 func TestCanLoadGrammar(t *testing.T) {
-	language := tree_sitter.NewLanguage(tree_sitter_rst.Language())
+	language := tree_sitter.NewLanguage(tree_sitter_rst2.Language())
 	if language == nil {
 		t.Errorf("Error loading Rst grammar")
 	}
