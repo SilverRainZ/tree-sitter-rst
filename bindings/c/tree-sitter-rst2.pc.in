@@ -2,10 +2,10 @@ prefix=@PREFIX@
 libdir=@LIBDIR@
 includedir=@INCLUDEDIR@
 
-Name: tree-sitter-rst
+Name: tree-sitter-rst2
 Description: Rst grammar for tree-sitter
 URL: @URL@
 Version: @VERSION@
 Requires: @REQUIRES@
-Libs: -L${libdir} @ADDITIONAL_LIBS@ -ltree-sitter-rst
+Libs: -L${libdir} @ADDITIONAL_LIBS@ -ltree-sitter-rst2
 Cflags: -I${includedir}

@@ -4,7 +4,7 @@ build:
 release: build format
 	npm run wasm
 	# GitHub pages doesn't like symbolic links
-	cp tree-sitter-rst.wasm docs/js/tree-sitter-rst.wasm
+	cp tree-sitter-rst2.wasm docs/js/tree-sitter-rst2.wasm
 
 test: build
 	npm run test

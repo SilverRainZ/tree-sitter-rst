@@ -3,7 +3,7 @@ requires = ["setuptools>=42", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "tree-sitter-rst"
+name = "tree-sitter-rst2"
 description = "Rst grammar for tree-sitter"
 version = "0.0.1"
 keywords = ["incremental", "parsing", "tree-sitter", "rst"]
@@ -19,7 +19,7 @@ license.text = "MIT"
 readme = "README.md"
 
 [project.urls]
-Homepage = "https://github.com/tree-sitter/tree-sitter-rst"
+Homepage = "https://github.com/tree-sitter/tree-sitter-rst2"
 
 [project.optional-dependencies]
 core = ["tree-sitter~=0.21"]

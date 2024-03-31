@@ -1,11 +1,11 @@
-# tree-sitter-rst
+# tree-sitter-rst2
 
-[![CI](https://github.com/stsewd/tree-sitter-rst/workflows/CI/badge.svg)](https://github.com/stsewd/tree-sitter-rst/actions?query=workflow%3ACI+branch%3Amaster)
+[![CI](https://github.com/stsewd/tree-sitter-rst2/workflows/CI/badge.svg)](https://github.com/stsewd/tree-sitter-rst2/actions?query=workflow%3ACI+branch%3Amaster)
 
 reStructuredText grammar for [tree-sitter](https://tree-sitter.github.io/tree-sitter/).
 Based on the specification from  <https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html>.
 
-Check the playground at <https://stsewd.dev/tree-sitter-rst/>.
+Check the playground at <https://stsewd.dev/tree-sitter-rst2/>.
 
 **Note: this grammar is still under development, a lot of things may change!**
 

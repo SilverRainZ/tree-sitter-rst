@@ -501,7 +501,7 @@ static bool parse_inner_list_element(RSTScanner* scanner, int consumed_chars, en
       // Check if the next line is an underline.
       // In that case, the list item is just a normal text from a title,
       // the underline must be at least as long as the title
-      // https://github.com/stsewd/tree-sitter-rst/issues/30.
+      // https://github.com/stsewd/tree-sitter-rst2/issues/30.
 
       // Go to the next line.
       consumed_chars = indent;
